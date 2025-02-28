@@ -7,12 +7,14 @@ import pendulum
 
 local_tz = pendulum.timezone("Asia/Seoul")
 
-def extract():
+# Extract 단계
+def extract() -> dict:
     data = pd.read_csv('pokemon_data_pokeapi.csv')
 
     return data.to_dict(orient="records")
 
-def transform(ti):
+# Transform 단계
+def transform(ti: dict) -> dict:
     data = ti.xcom_pull(task_ids="extract")
     df = pd.DataFrame(data)
     
@@ -27,7 +29,7 @@ def transform(ti):
     return df.to_dict(orient='records')
 
 # Load 단계 (MySQL에 저장)
-def load(ti):
+def load(ti : dict) -> None:
     data = ti.xcom_pull(task_ids="transform")
     mysql_hook = MySqlHook(mysql_conn_id="mysql_conn")
     conn = mysql_hook.get_conn()
