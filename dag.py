@@ -9,7 +9,7 @@ local_tz = pendulum.timezone("Asia/Seoul")
 
 # Extract 단계
 def extract() -> dict:
-    data = pd.read_csv('pokemon_data_pokeapi.csv')
+    data = pd.read_csv('/opt/airflow/dags/airflow-dag-k8s/pokemon_data_pokeapi.csv')
 
     return data.to_dict(orient="records")
 
@@ -26,7 +26,7 @@ def transform(ti: dict) -> dict:
     # Abilities를 문자열로 변환
     legendary_data["Abilities"] = legendary_data["Abilities"].apply(lambda x: x.replace(",", "|"))
 
-    return df.to_dict(orient='records')
+    return legendary_data.to_dict(orient='records')
 
 # Load 단계 (MySQL에 저장)
 def load(ti : dict) -> None:
